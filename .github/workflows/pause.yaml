@@ -1,13 +1,20 @@
-name: 测试工作流1
+name: 雷神自动停止加速
 
 on:
+  push:
+  workflow_dispatch: # 允许手动触发工作流
   schedule:
-    # 从北京时间21:43开始，每分钟触发一次
-    - cron: '43-59 13 * * *' # UTC时间13:43到13:59对应北京时间21:43到21:59
-    - cron: '*/1 14 * * *'   # UTC时间14:00到14:59对应北京时间22:00到22:59
+    # 定时任务，北京时间21:46执行
+    - cron: '46 13 * * *' # UTC时间13:46对应北京时间21:46
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "测试工作流已触发，当前时间：$(date)"
+      - name: 运行测试脚本
+        run: |
+          for i in {1..6}
+          do
+            echo "运行第$i次测试，当前时间：$(date)"
+            sleep 10
+          done
