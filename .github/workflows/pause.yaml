@@ -2,19 +2,24 @@ name: 雷神自动停止加速
 
 on:
   push:
-  workflow_dispatch: # 允许手动触发工作流
   schedule:
-    # 定时任务，北京时间21:46执行
-    - cron: '46 13 * * *' # UTC时间13:46对应北京时间21:46
-
+   # 定时任务，北京时间2点执行任务 2:00（北京时间）-8:00 = -17:00(24进制)cron指定的是格林尼治时间（UTC），如果需要换算成北京时间，要在该cron的基础上增加八小时得到北京时间
+    - cron: '49-59 13 * * *' # UTC时间13:46-13:59对应北京时间21:46-21:59
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 运行测试脚本
+      - uses: actions/checkout@v1
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: npm install
         run: |
-          for i in {1..6}
-          do
-            echo "运行第$i次测试，当前时间：$(date)"
-            sleep 10
-          done
+          npm install
+      - name: "雷神加速器暂停脚本"
+        run: |
+          node main.js
+        env:
+          LEISHEN_USERNAME: ${{ secrets.LEISHEN_USERNAME }}
+          LEISHEN_PASSWORD: ${{ secrets.LEISHEN_PASSWORD }}
